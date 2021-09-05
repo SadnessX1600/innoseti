@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -29,11 +31,18 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public Book saveBook(String title, List<Author> authors) {
+    public Book saveBook(String title, List<Author> authors) throws SQLException {
+        TypedQuery<Author> query = em.createQuery("select a from Author a left join a.book where a.name in :author_names", Author.class);
+        query.setParameter("author_names", authors.isEmpty() ? List.of("Unknown") : authors.stream().map(Author::getName).collect(Collectors.toList()));
         Book bookToSave = new Book();
         bookToSave.setTitle(title);
-        bookToSave.setAuthors(authors);
-        em.persist(bookToSave);
+        List<Author> persistedAuthors = query.getResultList();
+        if (persistedAuthors == null || persistedAuthors.isEmpty()) {
+            throw new SQLException("Book can't be saved without an author");
+        }
+        bookToSave.setAuthors(persistedAuthors);
+        persistedAuthors.forEach(author -> author.getBook().add(bookToSave));
+        persistedAuthors.forEach(author -> em.persist(author));
         return bookToSave;
     }
 

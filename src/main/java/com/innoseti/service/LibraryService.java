@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -39,7 +40,7 @@ public class LibraryService {
         return authorRepository.saveAuthor(name, books);
     }
 
-    public Book saveBook(String title, List<Author> authors) {
+    public Book saveBook(String title, List<Author> authors) throws SQLException {
         return bookRepository.saveBook(title, authors);
     }
 }

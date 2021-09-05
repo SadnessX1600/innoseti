@@ -4,6 +4,7 @@ package com.innoseti.model.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
@@ -15,6 +16,7 @@ public class Book {
     private long id;
 
     @Column(nullable = false)
+    @NotBlank
     private String title;
 
     @Column

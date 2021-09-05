@@ -3,6 +3,7 @@ package com.innoseti.model.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 
@@ -15,7 +16,8 @@ public class Author {
     @Column(name = "author_id")
     private long id;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
+    @NotBlank
     private String name;
 
     @Column
